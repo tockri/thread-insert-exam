@@ -1,0 +1,32 @@
+@(teams: List[Team])
+
+@main("Teams") {
+  <h1>Teams</h1>
+  <form action="javascript:void(0)" id="teams100Form">
+    <button type="submit">Insert 100 teams</button>
+    <span id="counter"></span>
+  </form>
+
+  <table class="border">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      @teams.map { t =>
+        <tr>
+          <td>@t.id.get</td>
+          <td><a href="/teams/@t.id/members">@t.name</a></td>
+        </tr>
+      }
+      @if(teams.isEmpty) {
+        <tr>
+          <td colspan="2">No team</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+}

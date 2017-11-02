@@ -1,0 +1,32 @@
+@(memberes: List[Member], team:Team)
+
+@main("Members") {
+
+  <h1>Members in @team.name</h1>
+
+  <a href="/">Back to top</a>
+
+  <table class="border">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+      </tr>
+    </thead>
+    <tbody>
+      @memberes.map { m =>
+        <tr>
+          <td>@m.id.get</td>
+          <td>@m.name</td>
+          <td>@m.age</td>
+        </tr>
+      }
+      @if(memberes.isEmpty) {
+        <tr>
+          <td colspan="3">No member</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
