@@ -31,6 +31,7 @@ class TIEMainController @Inject()(cc: ControllerComponents,
   }
 
   def allMembers() = Action {implicit req =>
+    println(s"#### req = ${req}")
     Ok("")
   }
 
@@ -58,6 +59,7 @@ class TIEMainController @Inject()(cc: ControllerComponents,
       for {
         _ <- teamService.createTeamWithRandom100Members()
       } yield {
+        println("#### completed test100")
         Ok(Json.obj(
           "success" -> true
         ))

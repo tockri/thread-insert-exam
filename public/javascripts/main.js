@@ -5,8 +5,8 @@
             var n = 100;
             counter += n;
             for (var i = 0; i < n; i++) {
-                $.ajax('/teams100', {
-                    method: 'post',
+                $.ajax('/test100', {
+                    method: 'get',
                     dataType: 'json',
                     success: function(result) {
                         console.log(result, "success");

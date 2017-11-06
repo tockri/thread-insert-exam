@@ -19,11 +19,13 @@ CREATE TABLE `team_member` (
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`member_id`,`team_id`),
   KEY `team_id` (`team_id`),
-  CONSTRAINT `team_member_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `team_member_ibfk_1` FOREIGN KEY (`member_id`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ,
   CONSTRAINT `team_member_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 # --- !Downs
-DROP TABLE `team_member`;
-DROP TABLE `team`;
-DROP TABLE `member`;
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `team_member`;
+DROP TABLE IF EXISTS `team`;
+DROP TABLE IF EXISTS `member`;
+SET FOREIGN_KEY_CHECKS = 1;

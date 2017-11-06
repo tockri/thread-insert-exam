@@ -15,13 +15,29 @@ sbt run
 ```
 
 ## ブラウザからアクセス
-http://localhost:9000
+http://localhost:9000/
 
-## Apache Benchでのアクセス
+## Apache Benchでのアクセス(1リクエストでメンバー100人、チーム1つ作る)
+```bash
+ab -n 30 -t 10 http://localhost:9000/test100
+```
 
+## スレッド、コネクションプールに関する設定
+application.conf
+```
+# スレッド、コネクションプールに関する設定
+db.default.hikaricp.maximumPoolSize = 24
+threadexam {
+  threads {
+    service = 4
+    db = 8
+    app = 0
+  }
+}
+```
 
-# 参考：Backlogのスレッドに関する設定
-## hikari CPのpool size = 60 (tokyo-5 prod.conf)
+# 参考：Backlog本番環境の設定
+## hikari CPのconnection pool size = 60 (tokyo-5 prod.conf)
 [server/ansible/roles/play-app/templates/etc/backlog/play/prod.backlog-tokyo-5.conf.j2](https://nulab.backlog.jp/git/BLG/server/blob/BLG-14546/missing-configs-on-dev/ansible/roles/play-app/templates/etc/backlog/play/prod.backlog-tokyo-5.conf.j2)
 
 ```
@@ -33,10 +49,10 @@ default.hikaricp {
 }
 ```
 
-## DBスレッドのExecuterService = 20
+## DBスレッドのExecuterService = コネクションプール数 OR 20
 [backlog-domain/src/main/scala/backlog/domain/model/config/ThreadPoolConfiguration.scala](https://nulab.backlog.jp/git/BLG/backlog-scala/blob/develop/backlog-domain/src/main/scala/backlog/domain/model/config/ThreadPoolConfiguration.scala)
 ```scala
-ExecutionContext.fromExecutorService(Executors.newFixedThreadPool(20))
+source.getOptInt("db.default.hikaricp.maximumPoolSize") orElse source.getOptInt("backlog.threadPool.db") getOrElse 20
 ```
 
 ## ApplicationおよびServiceスレッドのExecuterService = 4?
