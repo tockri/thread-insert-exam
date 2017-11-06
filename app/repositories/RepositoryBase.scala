@@ -1,11 +1,9 @@
 package repositories
 
-import services.PooledContexts
+import support.PooledContexts
 
 import scala.concurrent.ExecutionContext
 
-trait RepositoryBase {
-  implicit val executorContext: ExecutionContext = PooledContexts.dbContext
-
-
+abstract class RepositoryBase(pc:PooledContexts) {
+  implicit val executorContext: ExecutionContext = pc.dbContext
 }

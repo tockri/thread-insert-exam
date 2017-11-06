@@ -1,13 +1,17 @@
 package repositories
 
 import java.time.ZonedDateTime
+import javax.inject.{Inject, Singleton}
 
 import models.Member
 import scalikejdbc._
+import support.PooledContexts
 
 import scala.concurrent.Future
 
-object MemberRepository extends SQLSyntaxSupport[Member] with RepositoryBase {
+@Singleton
+class MemberRepository@Inject()(pc:PooledContexts)
+  extends RepositoryBase(pc) with SQLSyntaxSupport[Member] {
   override val tableName = "member"
 
   lazy val stx: QuerySQLSyntaxProvider[SQLSyntaxSupport[Member], Member] = syntax("m")
@@ -24,18 +28,6 @@ object MemberRepository extends SQLSyntaxSupport[Member] with RepositoryBase {
     withSQL {
       select.from(this as stx).where.eq(stx.id, id)
     }.map(entity(stx.resultName)).single().apply()
-  }
-
-  def listByTeam(teamId: Long)(implicit db: DBSession): Future[List[Member]] = Future {
-    val tm = TeamMemberRepository.stx
-    withSQL {
-      select.from(this as stx)
-        .innerJoin(TeamMemberRepository as tm)
-        .on(tm.memberId, stx.id)
-        .where.eq(tm.teamId, teamId)
-        .orderBy(stx.id desc)
-        .limit(30)
-    }.map(entity(stx.resultName)).list().apply()
   }
 
   def insert(member: Member)(implicit db: DBSession): Future[Member] = Future {

@@ -1,12 +1,16 @@
 package repositories
 
-import models.{Member, Team}
+import javax.inject.{Inject, Singleton}
+
+import models.Team
 import scalikejdbc._
+import support.PooledContexts
 
 import scala.concurrent.Future
 
-
-object TeamRepository extends SQLSyntaxSupport[Team] with RepositoryBase {
+@Singleton
+class TeamRepository@Inject()(pc:PooledContexts)
+  extends RepositoryBase(pc) with SQLSyntaxSupport[Team] {
 
   override val tableName = "team"
 
@@ -36,18 +40,6 @@ object TeamRepository extends SQLSyntaxSupport[Team] with RepositoryBase {
     withSQL {
       select.from(this as stx)
     }.map(entity(stx.resultName)).list().apply()
-  }
-
-  def listMembers(teamId: Long)(implicit db: DBSession): Future[List[Member]] = Future {
-    val mr = MemberRepository
-    val m = mr.stx
-    val tmr = TeamMemberRepository
-    val tm = tmr.stx
-    withSQL {
-      select.from(mr as m)
-        .innerJoin(tmr as tm).on(tm.memberId, m.id)
-        .where.eq(tm.teamId, teamId)
-    }.map(mr.entity(m.resultName)).list().apply()
   }
 
   def insert(team: Team)(implicit db: DBSession): Future[Team] = Future {
