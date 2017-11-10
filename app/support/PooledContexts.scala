@@ -25,13 +25,11 @@ class PooledContexts@Inject()(configuration: Configuration) {
   }
   private val db = svc("db")
   val dbContext:ExecutionContext = ctx(db)
-  private val app = svc("app")
-  val appContext:ExecutionContext = ctx(app)
   private val service = svc("service")
   val serviceContext:ExecutionContext = ctx(service)
 
   def shutdown(): Unit = {
-    Seq(db, app, service).foreach {svc =>
+    Seq(db, service).foreach {svc =>
       try {
         svc.awaitTermination(Long.MaxValue, TimeUnit.NANOSECONDS)
       } catch {
